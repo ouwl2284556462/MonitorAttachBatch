@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.owl.monitorattachbatch.mapper.sqlserver.MonitorAttachMapper" >
+
+    <resultMap type="com.owl.monitorattachbatch.bean.MonitorBean" id="MonitorAttachUploadResultMap">
+        <id column="monitor_id" property="id" jdbcType="INTEGER"/>
+        <result column="uploadState" property="uploadState" jdbcType="INTEGER"/>
+        <result column="isOverWeight" property="isOverWeight" jdbcType="INTEGER"/>
+        <result column="monitorPointDirection" property="monitorPointDirection" jdbcType="INTEGER"/>
+        <result column="carNumber" property="carNumber" jdbcType="VARCHAR"/>
+        <result column="carNumberColor" property="carNumberColor" jdbcType="INTEGER"/>
+        <result column="carType" property="carType" jdbcType="INTEGER"/>
+        <result column="lane" property="lane" jdbcType="INTEGER"/>
+        <result column="axisCount" property="axisCount" jdbcType="INTEGER"/>
+        <result column="speed" property="speed" jdbcType="INTEGER"/>
+        <result column="direction" property="direction" jdbcType="INTEGER"/>
+        <result column="weight" property="weight" jdbcType="INTEGER"/>
+        <result column="wheelBase" property="wheelBase" jdbcType="INTEGER"/>
+        <result column="axis1" property="axis1" jdbcType="INTEGER"/>
+        <result column="axis2" property="axis2" jdbcType="INTEGER"/>
+        <result column="axis3" property="axis3" jdbcType="INTEGER"/>
+        <result column="axis4" property="axis4" jdbcType="INTEGER"/>
+        <result column="axis5" property="axis5" jdbcType="INTEGER"/>
+        <result column="axis6" property="axis6" jdbcType="INTEGER"/>
+        <result column="axis7" property="axis7" jdbcType="INTEGER"/>
+        <result column="axis8" property="axis8" jdbcType="INTEGER"/>
+        <result column="weightStandard" property="weightStandard" jdbcType="INTEGER"/>
+        <result column="overWeight" property="overWeight" jdbcType="INTEGER"/>
+        <result column="deviceWeighId" property="deviceWeighId" jdbcType="INTEGER"/>
+        <result column="deviceWeighCalibrationId" property="deviceWeighCalibrationId" jdbcType="INTEGER"/>
+        <result column="state" property="state" jdbcType="INTEGER"/>
+        <result column="mediaState" property="mediaState" jdbcType="INTEGER"/>
+        <result column="serialNumber" property="serialNumber" jdbcType="VARCHAR"/>
+        <result column="uploadState2" property="uploadState2" jdbcType="INTEGER"/>
+        <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP"/>
+
+        <collection property="monitorAttachBeans" resultMap="MonitorAttachBeanResultMap"></collection>
+    </resultMap>
+
+    <resultMap type="com.owl.monitorattachbatch.bean.SysAttachBean" id="SysAttachBeanResultMap">
+        <id column="attach_id" property="id" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="path" property="path" jdbcType="VARCHAR"/>
+        <result column="ext" property="ext" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap type="com.owl.monitorattachbatch.bean.MonitorAttachBean" id="MonitorAttachBeanResultMap">
+        <result column="monitor_id" property="monitorId" jdbcType="INTEGER"/>
+        <result column="attach_id" property="attachId" jdbcType="VARCHAR"/>
+        <result column="type" property="type" jdbcType="INTEGER"/>
+
+        <association property="sysAttachBean" resultMap="SysAttachBeanResultMap"></association>
+    </resultMap>
+
+
+    <select id="qryNeedUploadAttachList" resultMap="MonitorAttachUploadResultMap">
+        SELECT
+            att.MONITOR_ID monitor_id,
+            att.ATTACH_ID attach_id,
+            att.TYPE type,
+            sat.NAME name,
+            sat.PATH path,
+            sat.EXT ext,
+            mon.MONITOR_POINT_DIRECTION monitorPointDirection,
+            mon.AXIS_COUNT axisCount,
+            mon.AXIS1 axis1,
+            mon.AXIS2 axis2,
+            mon.AXIS3 axis3,
+            mon.AXIS4 axis4,
+            mon.AXIS5 axis5,
+            mon.AXIS6 axis6,
+            mon.AXIS7 axis7,
+            mon.AXIS8 axis8,
+            mon.CAR_NUMBER carNumber,
+            mon.CAR_NUMBER_COLOR carNumberColor,
+            mon.CAR_TYPE carType,
+            mon.CAR_COLOR carColor,
+            mon.LANE lane,
+            mon.SPEED speed,
+            mon.DIRECTION direction,
+            mon.WEIGHT weight,
+            mon.WHEEL_BASE wheelBase,
+            mon.WEIGHT_STANDARD weightStandard,
+            mon.OVER_WEIGHT overWeight,
+            mon.IS_OVER_WEIGHT isOverWeight,
+            mon.DEVICE_WEIGH_ID deviceWeighId,
+            mon.DEVICE_WEIGH_CALIBRATION_ID deviceWeighCalibrationId,
+            mon.STATE state,
+            mon.UPLOAD_STATE uploadState,
+            mon.MEDIA_STATE mediaState,
+            mon.SERIAL_NUMBER serialNumber,
+            mon.UPLOAD_STATE_2 uploadState2,
+            mon.CREATE_TIME
+        FROM
+            MONITOR_ATTACH att, SYS_ATTACH sat, MONITOR mon
+        WHERE
+            att.ATTACH_ID = sat.ID
+            and mon.ID = att.MONITOR_ID
+            and att.MONITOR_ID IN (
+        SELECT MONITOR_ID FROM (
+                        SELECT
+                            ma.MONITOR_ID, ma.TYPE
+                        FROM
+                            MONITOR_ATTACH ma, MONITOR m
+                        WHERE
+                            ma.MONITOR_ID = m.ID
+                            AND m.UPLOAD_STATE = 0
+                            <if test="withVideo">
+                                AND m.IS_OVER_WEIGHT = 1
+                                AND ma.TYPE IN (1 , 2, 6, 3)
+                            </if>
+                            <if test="!withVideo">
+                                AND m.IS_OVER_WEIGHT = 0
+                                AND ma.TYPE IN (1 , 2, 6)
+                            </if>
+                        <!--防止相同id有相同type -->
+                        GROUP BY ma.MONITOR_ID , ma.TYPE
+                )
+                tm
+                GROUP BY MONITOR_ID
+                <if test="withVideo">
+                    HAVING (COUNT(1) = 4)
+                </if>
+                <if test="!withVideo">
+                    HAVING (COUNT(1) = 3)
+                </if>
+            )
+    </select>
+
+
+    <update id = "updateMonitorUploadState">
+        update MONITOR
+        set UPLOAD_STATE = #{state}
+        where
+        id = #{monitorId}
+    </update>
+
+</mapper>
+
+

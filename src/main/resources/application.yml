@@ -1,0 +1,95 @@
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.xa.DruidXADataSource
+    druid:
+      sqlserver:
+        name: sqlserverDbConfig
+        url: jdbc:sqlserver://192.168.1.101:1433;DatabaseName=dbo
+        username: test
+        password: a123456
+        driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
+        filters: stat,wall
+        maxActive: 20
+        initialSize: 1
+        maxWait: 60000
+        minIdle: 1
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        maxPoolPreparedStatementPerConnectionSize: 20
+        validationQuery: select 'x'
+        validationQueryTimeout: 10000
+        testWhileIdle: true
+        testOnBorrow: true
+        testOnReturn: true
+        poolPreparedStatements: true
+        maxOpenPreparedStatements: 20
+        # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
+        connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+        # 合并多个DruidDataSource的监控数据
+        useGlobalDataSourceStat: true
+
+      mysql:
+        name: mysqlDbConfig
+        url: jdbc:mysql://127.0.0.1:3306/test?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+        username: kiru
+        password: a123456789
+        driverClassName: com.mysql.cj.jdbc.Driver
+        filters: stat,wall
+        maxActive: 20
+        initialSize: 1
+        maxWait: 60000
+        minIdle: 1
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        maxPoolPreparedStatementPerConnectionSize: 20
+        validationQuery: select 'x'
+        validationQueryTimeout: 10000
+        testWhileIdle: true
+        testOnBorrow: true
+        testOnReturn: true
+        poolPreparedStatements: true
+        maxOpenPreparedStatements: 20
+        # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
+        connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+        # 合并多个DruidDataSource的监控数据
+        useGlobalDataSourceStat: true
+
+  druid:
+    name: admin
+    pass: 123
+
+
+mybatis:
+  mapperLocations: classpath:mapper/*.xml
+
+#分页
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: count=conutSql
+
+attachUpload:
+  #本地取文件的目录
+  localFileBasePath: C:/Users/Qin/Desktop/test/
+  schedule:
+    #处理周期
+    cron: 0/55 * * * * ?
+    #每周期处理monitor的数据量(实际处理数量为eachCount的两倍)
+    eachCount: 1
+  ftp:
+    ip: 192.168.1.100
+    port: 21
+    user: k
+    password: 1
+    #保存到ftp服务器的目录
+    ftpRemotePath: 111
+
+
+logging:
+  file: C:\Users\Qin\Desktop\test\myException.log
+
+
+
+
+

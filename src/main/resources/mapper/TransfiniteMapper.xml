@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.owl.monitorattachbatch.mapper.mysql.TransfiniteMapper" >
+
+    <insert id="insertTransfiniteBean">
+        INSERT INTO ${transfinteTableName} (
+            DETECTION_NUM,
+            STATION_CODE,
+            STATION_NAME,
+            LANE_DETECTION,
+            DRIVING_DIRECTION,
+            CAR_NUMBER,
+            CAR_NUM_COLOR,
+            DETECTION_TIME,
+            SPEED,
+            AXLES_NUMBER,
+            WHEEL_BASE,
+            AXLE_LOAD_STANDARD,
+            TOTAL_WEIGHT,
+            IS_OVERWEIGHT,
+            OVER_WEIGHT,
+            OVER_RATE,
+            CAR_COLOR,
+            VEHICLE_TYPE,
+            PHOTO,
+            PHOTO1,
+            PHOTO2,
+            PHOTO3,
+            VIDEO,
+            CREATE_TIME,
+            UPDATE_TIME,
+            UNIT_CODE,
+            quartzflag
+        )
+        VALUES(
+            #{detectionNum},
+            #{stationCode},
+            #{stationName},
+            #{laneDetection},
+            #{drivingDirection},
+            #{carNumber},
+            #{carNumColor},
+            #{detectionTime},
+            #{speed},
+            #{axlesNumber},
+            #{wheelBase},
+            #{axleLoadStandard},
+            #{totalWeight},
+            #{isOverweight},
+            #{overWeight},
+            #{overRate},
+            #{carColor},
+            #{vehicleType},
+            #{photo},
+            #{photo1},
+            #{photo2},
+            #{photo3},
+            #{video},
+            now(),
+            now(),
+            #{unitCode},
+            #{quartzflag}
+        )
+    </insert>
+</mapper>
+
+
